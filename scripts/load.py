@@ -38,9 +38,9 @@ def export_consolidated_dataframe(
             will be written.
 
     Returns:
-        Path: Path to the exported ``clientes_consolidado.xlsx`` file.
+        Path: Path to the exported ``consolidated_clients.xlsx`` file.
     """
-    output_file = output_data_path / 'clientes_consolidado.xlsx'
+    output_file = output_data_path / 'consolidated_clients.xlsx'
 
     dataframe.to_excel(output_file, index=False)
 

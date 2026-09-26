@@ -34,7 +34,7 @@ class ExportConsolidatedDataframeTests(unittest.TestCase):
 
         with TemporaryDirectory() as temporary_directory:
             output_directory = Path(temporary_directory)
-            output_file = output_directory / 'clientes_consolidado.xlsx'
+            output_file = output_directory / 'consolidated_clients.xlsx'
 
             result = export_consolidated_dataframe(
                 dataframe=dataframe,

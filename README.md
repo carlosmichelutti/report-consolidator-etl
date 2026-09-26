@@ -12,7 +12,7 @@ The pipeline is divided into three stages:
    dates, removes additional columns, and consolidates the reports into a
    single DataFrame.
 3. **Load:** exports the result to
-   `data/output/clientes_consolidado.xlsx` and replaces the `clientes` table in
+   `data/output/consolidated_clients.xlsx` and replaces the `clientes` table in
    PostgreSQL.
 
 ## Prerequisites
@@ -48,7 +48,7 @@ The `.env.example` file contains the required database settings:
 
 ```dotenv
 DATABASE_HOST=localhost
-DATABASE_PORT=5433
+DATABASE_PORT=5432
 DATABASE_NAME=postgres
 DATABASE_USER=postgres
 DATABASE_PASSWORD=postgres1234
@@ -115,7 +115,7 @@ uv run python -m scripts.pipeline
 After a successful execution:
 
 - the consolidated file will be available at
-  `data/output/clientes_consolidado.xlsx`;
+  `data/output/consolidated_clients.xlsx`;
 - the `clientes` table will be created or replaced in PostgreSQL;
 - logs from each pipeline stage will be displayed in the terminal.
 
