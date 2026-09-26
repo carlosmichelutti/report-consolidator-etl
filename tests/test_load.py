@@ -38,7 +38,7 @@ class ExportConsolidatedDataframeTests(unittest.TestCase):
 
             result = export_consolidated_dataframe(
                 dataframe=dataframe,
-                output_dir=output_directory,
+                output_data_path=output_directory,
             )
             exported_dataframe = pd.read_excel(output_file)
 
@@ -90,7 +90,7 @@ class RunLoadTests(unittest.TestCase):
         verify_output.assert_called_once_with()
         export_dataframe.assert_called_once_with(
             dataframe=dataframe,
-            output_dir=output_directory,
+            output_data_path=output_directory,
         )
         persist_dataframe.assert_called_once_with(
             dataframe=dataframe,

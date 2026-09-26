@@ -63,7 +63,7 @@ class ReadReportsTests(unittest.TestCase):
         self.assertEqual(read_excel.call_args_list[0].args, (report_paths[0],))
         self.assertEqual(read_excel.call_args_list[1].args, (report_paths[1],))
         self.assertIn(
-            '[EXTRACT] Loaded report "report_a.xlsx" | Rows: 2 | Columns: 1',
+            '[EXTRACT] - Loaded report "report_a.xlsx" | Rows: 2 | Columns: 1',
             output.getvalue(),
         )
 
