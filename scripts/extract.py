@@ -89,6 +89,3 @@ def run_extract() -> list[ReportData]:
 
     reports_data = read_reports(reports_list=reports_list)
     return reports_data
-
-if __name__ == '__main__':
-    run_extract()
