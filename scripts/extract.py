@@ -3,7 +3,7 @@ from typing import TypedDict
 
 import pandas as pd
 
-ROOT_DIR = Path(__file__).parents[1]
+ROOT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT_DIR / 'data' / 'input'
 
 
@@ -65,7 +65,7 @@ def read_reports(reports_list: list[Path]) -> list[ReportData]:
         )
 
         print(
-            f'[EXTRACT] Loaded report "{report_path.name}" | '
+            f'[EXTRACT] - Loaded report "{report_path.name}" | '
             f'Rows: {number_rows} | Columns: {number_columns}'
         )
 

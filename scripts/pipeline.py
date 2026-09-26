@@ -13,10 +13,6 @@ def run_pipeline() -> None:
     """
     Run the complete ETL pipeline in dependency order.
 
-    Extracted reports are passed to the transform stage, and the resulting
-    consolidated DataFrame is then passed to the load stage for local export
-    and persistence in the ``clientes`` database table.
-
     Returns:
         None: The pipeline performs its work through the side effects of the
             load stage and does not return a value.

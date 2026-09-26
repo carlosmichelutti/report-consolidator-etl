@@ -147,7 +147,6 @@ def remove_unnecessary_columns(
         )
 
     dataframe = dataframe.loc[:, list(CUSTOMERS_COLUMNS)].copy()
-
     return dataframe
 
 
