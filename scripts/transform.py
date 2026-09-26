@@ -1,16 +1,9 @@
-import sys
 from datetime import datetime
-from pathlib import Path
 from typing import Literal
 
 import pandas as pd
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, ROOT_DIR.as_posix())
-
-from scripts.extract import run_extract
-
-DATA_DIR = ROOT_DIR / 'data' / 'input'
+from scripts.extract import ReportData
 
 CUSTOMERS_COLUMNS = (
     'id_cliente',
@@ -243,21 +236,23 @@ def unify_dataframes(
     return dataframe_unified
 
 
-def run_transform() -> pd.DataFrame:
+def run_transform(reports_data: list[ReportData]) -> pd.DataFrame:
     """
-    Extract, transform and consolidate all input reports.
+    Transform and consolidate the reports received from the extract layer.
+
+    Args:
+        reports_data (list[ReportData]): Reports extracted from the source
+            files. Each item contains the report name and its DataFrame.
 
     Returns:
         pd.DataFrame: Consolidated DataFrame containing the normalized rows
             from every input report.
 
     Raises:
-        ValueError: If no Excel report is found in the input directory, or if
-            a report contains an invalid date value.
+        ValueError: If a report contains an invalid date value.
         MissingRequiredColumnsError: If any report does not contain every
             required column.
     """
-    reports_data = run_extract()
     dataframe_unified = pd.DataFrame(columns=CUSTOMERS_COLUMNS)
 
     for report_data in reports_data:
@@ -273,7 +268,3 @@ def run_transform() -> pd.DataFrame:
         )
 
     return dataframe_unified
-
-
-if __name__ == '__main__':
-    run_transform()
