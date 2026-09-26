@@ -1,0 +1,36 @@
+[project]
+name = "report-consolidator-etl"
+version = "0.1.0"
+description = "A Python ETL pipeline that consolidates customer XLSX reports and persists the processed data to PostgreSQL."
+readme = "README.md"
+authors = [
+    { name = "Carlos Michelutti", email = "carlos.stz590@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "openpyxl>=3.1.5",
+    "pandas>=3.0.6",
+    "psycopg2>=2.9.13",
+    "pydantic-settings>=2.15.0",
+    "python-dotenv>=1.1.1",
+    "sqlalchemy>=2.0.54",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py313"
+
+[tool.ruff.lint]
+ignore = ["DTZ001", "DTZ007"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/pipeline.py" = ["E402"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.9",
+]
