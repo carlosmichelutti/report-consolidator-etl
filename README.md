@@ -102,11 +102,9 @@ the following columns:
 
 The repository includes 30 monthly reports named `customers_YYYY_MM.xlsx`, from
 January 2024 through June 2026, with 18,485 rows in total. Each workbook uses a
-`customers` worksheet and contains fictional US-style names, matching
+`customers` worksheet and contains fictional names, matching
 `example.com` email addresses, and generic identifiers. Optional contact fields
-use US cities, state abbreviations, and phone formats. Each report retains its
-original row count and set of optional fields, with all headers and text values
-in English.
+use US cities, state abbreviations, and phone formats.
 
 Identifiers are read as text and trimmed, preserving leading zeros and
 alphanumeric values without applying a country-specific length. Customer IDs,
