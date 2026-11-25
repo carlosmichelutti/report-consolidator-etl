@@ -17,14 +17,14 @@ from scripts.transform import (
 
 def make_dataframe(**overrides: object) -> pd.DataFrame:
     data: dict[str, list[object]] = {
-        'id_cliente': [' cli-001 '],
-        'nome_cliente': [' Maria da Silva '],
-        'cpf': [1234567890],
-        'data_nascimento': ['1990-05-10'],
-        'data_registro': ['2026-09-25T10:30:45'],
-        'email': [' MARIA@EXAMPLE.COM '],
-        'status': [' ativo '],
-        'coluna_extra': ['remove me'],
+        'customer_id': [' cust-001 '],
+        'customer_name': [' James Smith '],
+        'identifier': [' id-000123 '],
+        'birth_date': ['1990-05-10'],
+        'registration_date': ['2026-09-25T10:30:45'],
+        'email': [' JAMES.SMITH@EXAMPLE.COM '],
+        'status': [' active '],
+        'extra_column': ['remove me'],
     }
     data.update({key: [value] for key, value in overrides.items()})
     return pd.DataFrame(data)
@@ -35,11 +35,11 @@ class ValidateRequiredColumnsTests(unittest.TestCase):
         validate_required_columns('report.xlsx', make_dataframe())
 
     def test_lists_every_missing_column_in_schema_order(self) -> None:
-        dataframe = make_dataframe().drop(columns=['nome_cliente', 'email'])
+        dataframe = make_dataframe().drop(columns=['customer_name', 'email'])
 
         with self.assertRaisesRegex(
             MissingRequiredColumnsError,
-            r'report\.xlsx.*"nome_cliente", "email"',
+            r'report\.xlsx.*"customer_name", "email"',
         ):
             validate_required_columns('report.xlsx', dataframe)
 
@@ -58,6 +58,15 @@ class ParseDateTests(unittest.TestCase):
 
 
 class TransformDataframeTests(unittest.TestCase):
+    def test_preserves_generic_identifiers_without_country_specific_padding(self) -> None:
+        for value, expected in [(' 000123 ', '000123'), (12345, '12345')]:
+            with self.subTest(identifier=value):
+                result = transform_dataframe(
+                    'report.xlsx', make_dataframe(identifier=value),
+                )
+
+                self.assertEqual(result.at[0, 'identifier'], expected)
+
     def test_normalizes_values_columns_and_types_without_mutating_source(self) -> None:
         source = make_dataframe()
         source_before = source.copy(deep=True)
@@ -65,20 +74,20 @@ class TransformDataframeTests(unittest.TestCase):
         result = transform_dataframe('report.xlsx', source)
 
         self.assertEqual(list(result.columns), list(CUSTOMERS_COLUMNS))
-        self.assertEqual(result.at[0, 'id_cliente'], 'CLI-001')
-        self.assertEqual(result.at[0, 'nome_cliente'], 'MARIA DA SILVA')
-        self.assertEqual(result.at[0, 'cpf'], '01234567890')
-        self.assertEqual(result.at[0, 'email'], 'maria@example.com')
-        self.assertEqual(result.at[0, 'status'], 'ATIVO')
-        self.assertEqual(result.at[0, 'data_nascimento'], datetime(1990, 5, 10))
+        self.assertEqual(result.at[0, 'customer_id'], 'CUST-001')
+        self.assertEqual(result.at[0, 'customer_name'], 'JAMES SMITH')
+        self.assertEqual(result.at[0, 'identifier'], 'id-000123')
+        self.assertEqual(result.at[0, 'email'], 'james.smith@example.com')
+        self.assertEqual(result.at[0, 'status'], 'ACTIVE')
+        self.assertEqual(result.at[0, 'birth_date'], datetime(1990, 5, 10))
         assert_frame_equal(source, source_before)
 
     def test_identifies_report_and_column_when_date_is_invalid(self) -> None:
-        dataframe = make_dataframe(data_registro='not-a-date')
+        dataframe = make_dataframe(registration_date='not-a-date')
 
         with self.assertRaisesRegex(
             ValueError,
-            r'data_registro.*report\.xlsx.*Invalid date',
+            r'registration_date.*report\.xlsx.*Invalid date',
         ):
             transform_dataframe('report.xlsx', dataframe)
 
@@ -88,14 +97,14 @@ class UnifyDataframesTests(unittest.TestCase):
         first = transform_dataframe('first.xlsx', make_dataframe())
         second = transform_dataframe(
             'second.xlsx',
-            make_dataframe(id_cliente='CLI-002'),
+            make_dataframe(customer_id='CUST-002'),
         )
 
         result = unify_dataframes('second.xlsx', first, second)
 
         self.assertEqual(len(result), 2)
         self.assertEqual(result.index.tolist(), [0, 1])
-        self.assertEqual(result['id_cliente'].tolist(), ['CLI-001', 'CLI-002'])
+        self.assertEqual(result['customer_id'].tolist(), ['CUST-001', 'CUST-002'])
 
 
 class RunTransformTests(unittest.TestCase):
@@ -103,11 +112,11 @@ class RunTransformTests(unittest.TestCase):
         reports_data = [
             {
                 'name_report': 'first.xlsx',
-                'data_report': make_dataframe(id_cliente='cli-001'),
+                'data_report': make_dataframe(customer_id='cust-001'),
             },
             {
                 'name_report': 'second.xlsx',
-                'data_report': make_dataframe(id_cliente='cli-002'),
+                'data_report': make_dataframe(customer_id='cust-002'),
             },
         ]
 
@@ -115,7 +124,7 @@ class RunTransformTests(unittest.TestCase):
 
         self.assertEqual(len(result), 2)
         self.assertEqual(list(result.columns), list(CUSTOMERS_COLUMNS))
-        self.assertEqual(result['id_cliente'].tolist(), ['CLI-001', 'CLI-002'])
+        self.assertEqual(result['customer_id'].tolist(), ['CUST-001', 'CUST-002'])
 
 
 if __name__ == '__main__':

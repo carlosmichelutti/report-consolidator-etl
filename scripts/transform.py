@@ -6,11 +6,11 @@ import pandas as pd
 from scripts.extract import ReportData
 
 CUSTOMERS_COLUMNS = (
-    'id_cliente',
-    'nome_cliente',
-    'cpf',
-    'data_nascimento',
-    'data_registro',
+    'customer_id',
+    'customer_name',
+    'identifier',
+    'birth_date',
+    'registration_date',
     'email',
     'status',
 )
@@ -165,7 +165,7 @@ def transform_dataframe(
 
     Returns:
         pd.DataFrame: New DataFrame containing only the required columns with
-            normalized text, CPF and date values.
+            normalized text, identifier and date values.
 
     Raises:
         MissingRequiredColumnsError: If the report does not contain every
@@ -182,13 +182,13 @@ def transform_dataframe(
         dataframe=dataframe
     )
 
-    transformed['id_cliente'] = transformed['id_cliente'].map(normalize_text, case='upper')
-    transformed['nome_cliente'] = transformed['nome_cliente'].map(normalize_text, case='upper')
-    transformed['cpf'] = transformed['cpf'].astype(str).str.strip().str.zfill(11)
+    transformed['customer_id'] = transformed['customer_id'].map(normalize_text, case='upper')
+    transformed['customer_name'] = transformed['customer_name'].map(normalize_text, case='upper')
+    transformed['identifier'] = transformed['identifier'].astype(str).str.strip()
     transformed['email'] = transformed['email'].map(normalize_text, case='lower')
     transformed['status'] = transformed['status'].map(normalize_text, case='upper')
 
-    for column in ('data_nascimento', 'data_registro'):
+    for column in ('birth_date', 'registration_date'):
         try:
             transformed[column] = transformed[column].map(parse_date, na_action='ignore')
         except (TypeError, ValueError) as error:

@@ -62,6 +62,8 @@ class ReadReportsTests(unittest.TestCase):
         self.assertIs(result[1]['data_report'], dataframes[1])
         self.assertEqual(read_excel.call_args_list[0].args, (report_paths[0],))
         self.assertEqual(read_excel.call_args_list[1].args, (report_paths[1],))
+        for read_call in read_excel.call_args_list:
+            self.assertEqual(read_call.kwargs, {'dtype': {'identifier': str}})
         self.assertIn(
             '[EXTRACT] - Loaded report "report_a.xlsx" | Rows: 2 | Columns: 1',
             output.getvalue(),

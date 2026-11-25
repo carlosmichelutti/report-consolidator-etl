@@ -55,7 +55,7 @@ def read_reports(reports_list: list[Path]) -> list[ReportData]:
     """
     reports_data: list[ReportData] = []
     for report_path in reports_list:
-        report_dataframe = pd.read_excel(report_path)
+        report_dataframe = pd.read_excel(report_path, dtype={'identifier': str})
         number_rows, number_columns = report_dataframe.shape
         reports_data.append(
             {
