@@ -8,11 +8,11 @@ normalizes their data, and persists the result to an Excel file and PostgreSQL.
 The pipeline is divided into three stages:
 
 1. **Extract:** reads every `.xlsx` file available in `data/input`.
-2. **Transform:** validates required columns, normalizes text, CPF numbers, and
+2. **Transform:** validates required columns, normalizes text, identifiers, and
    dates, removes additional columns, and consolidates the reports into a
    single DataFrame.
 3. **Load:** exports the result to
-   `data/output/consolidated_clients.xlsx` and replaces the `clientes` table in
+   `data/output/consolidated_clients.xlsx` and replaces the `customers` table in
    PostgreSQL.
 
 ## Prerequisites
@@ -92,15 +92,34 @@ the following columns:
 
 | Column | Description |
 | --- | --- |
-| `id_cliente` | Customer identifier |
-| `nome_cliente` | Customer name |
-| `cpf` | Customer CPF number |
-| `data_nascimento` | Date of birth |
-| `data_registro` | Registration date |
+| `customer_id` | Internal customer ID (for example, `CUST-0000001`) |
+| `customer_name` | Customer name |
+| `identifier` | Generic external identifier (for example, `ID-0000001`) |
+| `birth_date` | Date of birth |
+| `registration_date` | Registration date |
 | `email` | Email address |
-| `status` | Registration status |
+| `status` | Registration status: `active`, `inactive`, `pending`, or `blocked` |
 
-Dates may use the `YYYY-MM-DD`, `YYYY-MM-DD HH:MM:SS`, or
+The repository includes 30 monthly reports named `customers_YYYY_MM.xlsx`, from
+January 2024 through June 2026, with 18,485 rows in total. Each workbook uses a
+`customers` worksheet and contains fictional US-style names, matching
+`example.com` email addresses, and generic identifiers. Optional contact fields
+use US cities, state abbreviations, and phone formats. Each report retains its
+original row count and set of optional fields, with all headers and text values
+in English.
+
+Identifiers are read as text and trimmed, preserving leading zeros and
+alphanumeric values without applying a country-specific length. Customer IDs,
+names, and statuses are trimmed and uppercased; email addresses are trimmed and
+lowercased.
+
+Optional columns vary by report: `phone`, `city`, `state`, `age`, `occupation`,
+`monthly_income`, `newsletter_opt_in`, `registration_channel`, `last_interaction`,
+`internal_note`, `created_at`, and `updated_at`.
+The sample `monthly_income` amounts retain their numeric values and use a
+currency-neutral number format.
+
+Dates may be native Excel dates or use the `YYYY-MM-DD`, `YYYY-MM-DD HH:MM:SS`, or
 `YYYY-MM-DDTHH:MM:SS` format. Additional columns are removed during the
 transformation stage.
 
@@ -116,7 +135,7 @@ After a successful execution:
 
 - the consolidated file will be available at
   `data/output/consolidated_clients.xlsx`;
-- the `clientes` table will be created or replaced in PostgreSQL;
+- the `customers` table will be created or replaced in PostgreSQL;
 - logs from each pipeline stage will be displayed in the terminal.
 
 The file and database table always represent the latest consolidation because
