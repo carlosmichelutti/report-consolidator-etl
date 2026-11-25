@@ -23,7 +23,7 @@ def run_pipeline() -> None:
     )
     run_load(
         dataframe=dataframe,
-        table_name='clientes'
+        table_name='customers'
     )
 
 

@@ -29,7 +29,7 @@ class VerifyOutputFolderTests(unittest.TestCase):
 class ExportConsolidatedDataframeTests(unittest.TestCase):
     def test_exports_dataframe_to_output_directory(self) -> None:
         dataframe = pd.DataFrame(
-            {'id_cliente': ['CLI-001'], 'nome_cliente': ['MARIA']}
+            {'customer_id': ['CUST-001'], 'customer_name': ['JAMES']}
         )
 
         with TemporaryDirectory() as temporary_directory:
@@ -51,18 +51,18 @@ class PersistDataframeToDatabaseTests(unittest.TestCase):
     def test_inserts_dataframe_using_database_context(self, database_class) -> None:
         database = database_class.return_value.__enter__.return_value
         database.insert_dataframe.return_value = 2
-        dataframe = pd.DataFrame({'id_cliente': ['CLI-001', 'CLI-002']})
+        dataframe = pd.DataFrame({'customer_id': ['CUST-001', 'CUST-002']})
 
         inserted_rows = persist_dataframe_to_database(
             dataframe=dataframe,
-            table_name='clientes',
+            table_name='customers',
         )
 
         self.assertEqual(inserted_rows, 2)
         database_class.assert_called_once_with()
         database.insert_dataframe.assert_called_once_with(
             dataframe=dataframe,
-            table_name='clientes',
+            table_name='customers',
             if_exists='replace',
         )
 
@@ -77,13 +77,13 @@ class RunLoadTests(unittest.TestCase):
         export_dataframe,
         persist_dataframe,
     ) -> None:
-        dataframe = pd.DataFrame({'id_cliente': ['CLI-001']})
+        dataframe = pd.DataFrame({'customer_id': ['CUST-001']})
         output_directory = Path('data/output')
         verify_output.return_value = output_directory
 
         result = run_load(
             dataframe=dataframe,
-            table_name='clientes',
+            table_name='customers',
         )
 
         self.assertIsNone(result)
@@ -94,7 +94,7 @@ class RunLoadTests(unittest.TestCase):
         )
         persist_dataframe.assert_called_once_with(
             dataframe=dataframe,
-            table_name='clientes',
+            table_name='customers',
         )
 
 

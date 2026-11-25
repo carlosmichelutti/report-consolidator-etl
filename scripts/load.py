@@ -53,7 +53,7 @@ def export_consolidated_dataframe(
 
 def persist_dataframe_to_database(
     dataframe: pd.DataFrame,
-    table_name: str = 'clientes'
+    table_name: str = 'customers'
 ) -> int:
     """
     Persist the consolidated DataFrame in PostgreSQL.
@@ -82,7 +82,7 @@ def persist_dataframe_to_database(
 
 def run_load(
     dataframe: pd.DataFrame,
-    table_name: str = 'clientes'
+    table_name: str = 'customers'
 ) -> None:
     """
     Persist transformed data locally and in PostgreSQL.

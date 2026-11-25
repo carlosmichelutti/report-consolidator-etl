@@ -19,10 +19,10 @@ class RunPipelineTests(unittest.TestCase):
         reports_data = [
             {
                 'name_report': 'report.xlsx',
-                'data_report': pd.DataFrame({'id_cliente': ['CLI-001']}),
+                'data_report': pd.DataFrame({'customer_id': ['CUST-001']}),
             }
         ]
-        dataframe = pd.DataFrame({'id_cliente': ['CLI-001']})
+        dataframe = pd.DataFrame({'customer_id': ['CUST-001']})
         run_extract.return_value = reports_data
         run_transform.return_value = dataframe
         stage_order = Mock()
@@ -42,7 +42,7 @@ class RunPipelineTests(unittest.TestCase):
         run_transform.assert_called_once_with(reports_data=reports_data)
         run_load.assert_called_once_with(
             dataframe=dataframe,
-            table_name='clientes',
+            table_name='customers',
         )
         self.assertEqual(
             stage_order.call_args_list,
